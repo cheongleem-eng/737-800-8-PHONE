@@ -313,6 +313,7 @@
     <audio id="snd-two" src="two.mp3" preload="auto"></audio>
     <audio id="snd-two2" src="two2.mp3" preload="auto"></audio>
     <audio id="snd-five" src="five.mp3" preload="auto"></audio>
+    <audio id="snd-crew" src="crew.mp3" preload="auto"></audio>
 
     <script>
         let isPaMode = false;
@@ -343,7 +344,17 @@
             playSound('snd-bgm');
             
             if (key === '5') {
-                const t = setTimeout(() => playSound('snd-five-bgm'), 300);
+                const t = setTimeout(() => {
+                    const snd = document.getElementById('snd-five-bgm');
+                    if (snd) {
+                        snd.currentTime = 0;
+                        snd.play().catch(e => console.log("Audio Play Error:", e));
+                        snd.onended = () => {
+                            const t2 = setTimeout(() => playSound('snd-crew'), 500);
+                            soundTimeouts.push(t2);
+                        };
+                    }
+                }, 300);
                 soundTimeouts.push(t);
             } else if (key === '2') {
                 key2ClickCount++;
@@ -433,7 +444,7 @@
             soundTimeouts.forEach(t => clearTimeout(t));
             soundTimeouts = [];
 
-            ['snd-five-bgm', 'snd-two-bgm', 'snd-two', 'snd-two2'].forEach(id => {
+            ['snd-five-bgm', 'snd-two-bgm', 'snd-two', 'snd-two2', 'snd-crew'].forEach(id => {
                 const snd = document.getElementById(id);
                 if (snd) {
                     snd.pause();
