@@ -8,7 +8,7 @@
         /* 1. 전체 배경 */
         body {
             background-image: url('737background.png');
-            background-size: 100% auto; /* 가로 너비에 맞춤 */
+            background-size: 600px 1000px; /* 세로형으로 고정하여 화면 깨짐 방지 */
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
@@ -72,14 +72,16 @@
             border: 4px solid #6a6a6a;
             box-sizing: border-box;
             
-            /* 초기 상태: 아래에 대기 */
+            /* 초기 상태: 투명하게 대기 (올라오는 효과 제거) */
             position: relative;
             z-index: 50;
-            transform: translateY(100vh);
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
         .handset-body.active {
-            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         /* 상단 귀 대는 부분 (듣는 곳) */
@@ -246,13 +248,15 @@
         /* 모바일 대응 미디어 쿼리 */
         @media (max-width: 600px) {
             body {
-                background-size: contain; /* 작은 화면에서는 전체 이미지가 보이도록 */
+                background-attachment: scroll; /* 모바일에서 fixed 속성으로 인한 이미지 깨짐 방지 */
+                background-size: 100% auto; /* 가로 너비에 맞추고 세로는 비율 유지 */
+                background-position: center top; /* 이미지를 상단 끝에 밀착 */
             }
             .handset-body {
-                transform: translateY(100vh) scale(0.85); /* 모바일에서는 약간 축소 */
+                transform: scale(0.85); /* 모바일 축소 비율 유지 */
             }
             .handset-body.active {
-                transform: translateY(0) scale(0.85);
+                transform: scale(0.85);
             }
             .footer-info {
                 bottom: 10px;
@@ -327,12 +331,11 @@
     </div>
 
     <!-- 오디오 -->
-    <audio id="snd-bgm" src="button bgm.mp3" preload="auto"></audio>
-    <audio id="snd-five-bgm" src="five bgm.mp3" preload="auto"></audio>
-    <audio id="snd-two-bgm" src="two bgm.mp3" preload="auto"></audio>
+    <audio id="snd-bgm" src="button_bgm.mp3" preload="auto"></audio>
+    <audio id="snd-five-bgm" src="five_bgm.mp3" preload="auto"></audio>
+    <audio id="snd-two-bgm" src="two_bgm.mp3" preload="auto"></audio>
     <audio id="snd-two" src="two.mp3" preload="auto"></audio>
     <audio id="snd-two2" src="two2.mp3" preload="auto"></audio>
-    <audio id="snd-five" src="five.mp3" preload="auto"></audio>
     <audio id="snd-crew" src="crew.mp3" preload="auto"></audio>
 
     <script>
@@ -464,7 +467,7 @@
             soundTimeouts.forEach(t => clearTimeout(t));
             soundTimeouts = [];
 
-            ['snd-five-bgm', 'snd-two-bgm', 'snd-two', 'snd-two2', 'snd-crew'].forEach(id => {
+            ['snd-bgm', 'snd-five-bgm', 'snd-two-bgm', 'snd-two', 'snd-two2', 'snd-crew'].forEach(id => {
                 const snd = document.getElementById(id);
                 if (snd) {
                     snd.pause();
